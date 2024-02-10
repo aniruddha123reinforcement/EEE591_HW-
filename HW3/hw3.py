@@ -78,13 +78,7 @@ def stamper(y_add, netlist, currents, node_cnt):
             if (i >= 0 and j >= 0):                
                 y_add[i, j] -= 1.0 / comp[COMP.VAL]
                 y_add[j, i] -= 1.0 / comp[COMP.VAL]
-            # Add another row to the currents matrix
-            # Set entry [M] to VAL
-            currents[M-1] = comp[COMP.VAL]
-
-            # Add another row to the voltage matrix
-            # Set entry [M] to 0
-            voltages[M-1] = 0
+            
 
         
         
@@ -101,7 +95,13 @@ def stamper(y_add, netlist, currents, node_cnt):
                 y_add[M-1, j] = -1.0
                 y_add[j, M-1] = -1.0
 
-        
+            # Add another row to the currents matrix
+            # Set entry [M] to VAL
+            currents[M-1] = comp[COMP.VAL]
+
+            # Add another row to the voltage matrix
+            # Set entry [M] to 0
+            voltages[M-1] = 0
        
 
 
