@@ -63,25 +63,39 @@ def stamper(y_add, netlist, currents, node_cnt):
         i = comp[COMP.I] - 1
         j = comp[COMP.J] - 1
 
-        if (comp[COMP.TYPE] == COMP.R):           # if component is a resistor
-            if (i >= 0):                            # add 1/VAL for entries [i,i] & [j,j]
-                y_add[i, i] += 1.0 / comp[COMP.VAL]
-            if (j >= 0):                            # add 1/VAL for entries [i,i] & [j,j]
-                y_add[j, j] += 1.0 / comp[COMP.VAL]
-            if (i >= 0 and j >= 0):                 # subtract 1/VAL for entries [i,j] & [j,i]
-                y_add[i, j] -= 1.0 / comp[COMP.VAL]
-                y_add[j, i] -= 1.0 / comp[COMP.VAL]
         
-        elif (comp[COMP.TYPE] == COMP.VS):          # if component is a voltage source
+        ##By definition of Stamping 
+
+        # Component is VOLTAGE SOURCE 
+     
+        # Admittance matrix is assigned the rows and columns 
+        # First Set entries [M,i] and [i,M] to 1
+        # Then in 2nd Loop Set entries [M,j] and [j,M] to -1
+        
+        if (comp[COMP.TYPE] == COMP.VS):          
             node_cnt += 1
-            M = node_cnt                            # Number of rows in admittance matrix
-            if (i>= 0):                             # Set entries [M,i] and [i,M] to 1
+            M = node_cnt                           
+            if (i>= 0):                             
                 y_add[M-1, i] = 1.0
                 y_add[i, M-1] = 1.0
-            if (j >= 0):                            # Set entries [M,j] and [j,M] to -1
+            if (j >= 0):                            
                 y_add[M-1, j] = -1.0
                 y_add[j, M-1] = -1.0
+        # Component is RESISTOR  
 
+         #Admittance matrix is assigned the rows and columns 
+         #First Set entries [M,i] and [i,M] to 1 by VAL
+         #Then in 2nd Loop Set entries [M,j] and [j,M] to -1 by VAL
+        
+        
+        elif (comp[COMP.TYPE] == COMP.R):          
+            if (i >= 0):                            
+                y_add[i, i] += 1.0 / comp[COMP.VAL]
+            if (j >= 0):                           
+                y_add[j, j] += 1.0 / comp[COMP.VAL]
+            if (i >= 0 and j >= 0):                
+                y_add[i, j] -= 1.0 / comp[COMP.VAL]
+                y_add[j, i] -= 1.0 / comp[COMP.VAL]
             # Add another row to the currents matrix
             # Set entry [M] to VAL
             currents[M-1] = comp[COMP.VAL]
@@ -90,13 +104,19 @@ def stamper(y_add, netlist, currents, node_cnt):
             # Set entry [M] to 0
             voltages[M-1] = 0
 
-        elif (comp[COMP.TYPE] == COMP.IS):          # if component is a current source
-            if (i >= 0):                            # Subtract I at entry [i] in the current matrix
+         # Component is CURRENT SOURCE 
+
+        #Subtract by 1/VAL AND ADD by 1/VAL
+
+
+        
+        elif (comp[COMP.TYPE] == COMP.IS):          
+            if (i >= 0):                            
                 if (comp[COMP.VAL] >= 0):
                     currents[i] -= 1.0 * comp[COMP.VAL]
                 else:
                     currents[i] += 1.0 * comp[COMP.VAL]
-            if (j >= 0):                            # Add I at entry [j] in the current matrix
+            if (j >= 0):                           
                 if(comp[COMP.VAL] >= 0):
                     currents[j] += 1.0 * comp[COMP.VAL]
                 else:
