@@ -65,30 +65,12 @@ def stamper(y_add, netlist, currents, node_cnt):
 
         
         ##By definition of Stamping 
-
-        # Component is VOLTAGE SOURCE 
-     
+        
+        # Component is RESISTOR  
         # Admittance matrix is assigned the rows and columns 
         # First Set entries [M,i] and [i,M] to 1
         # Then in 2nd Loop Set entries [M,j] and [j,M] to -1
-        
-        if (comp[COMP.TYPE] == COMP.VS):          
-            node_cnt += 1
-            M = node_cnt                           
-            if (i>= 0):                             
-                y_add[M-1, i] = 1.0
-                y_add[i, M-1] = 1.0
-            if (j >= 0):                            
-                y_add[M-1, j] = -1.0
-                y_add[j, M-1] = -1.0
-        # Component is RESISTOR  
-
-         #Admittance matrix is assigned the rows and columns 
-         #First Set entries [M,i] and [i,M] to 1 by VAL
-         #Then in 2nd Loop Set entries [M,j] and [j,M] to -1 by VAL
-        
-        
-        elif (comp[COMP.TYPE] == COMP.R):          
+        if (comp[COMP.TYPE] == COMP.R):          
             if (i >= 0):                            
                 y_add[i, i] += 1.0 / comp[COMP.VAL]
             if (j >= 0):                           
@@ -103,6 +85,26 @@ def stamper(y_add, netlist, currents, node_cnt):
             # Add another row to the voltage matrix
             # Set entry [M] to 0
             voltages[M-1] = 0
+
+        
+        
+        #Component is a VOLTAGE SOURCE
+         #First Set entries [M,i] and [i,M] to 1 by VAL
+         #Then in 2nd Loop Set entries [M,j] and [j,M] to -1 by VAL
+        elif (comp[COMP.TYPE] == COMP.VS):          
+            node_cnt += 1
+            M = node_cnt                           
+            if (i>= 0):                             
+                y_add[M-1, i] = 1.0
+                y_add[i, M-1] = 1.0
+            if (j >= 0):                            
+                y_add[M-1, j] = -1.0
+                y_add[j, M-1] = -1.0
+
+        
+       
+
+
 
          # Component is CURRENT SOURCE 
 
